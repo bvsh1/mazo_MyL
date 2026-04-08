@@ -1,121 +1,98 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+// src/App.jsx
+import React from 'react';
+import Builder from './pages/Builder';
+import { useDeckStore } from './store/useDeckStore';
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Conectamos el Navbar al estado global
+  const { mazo, oros, limpiarMazo } = useDeckStore();
+
+  const handleLimpiar = () => {
+    if (window.confirm('¿Estás seguro de que deseas descartar este mazo por completo?')) {
+      limpiarMazo();
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+      
+      <header style={{ 
+        backgroundColor: '#0a0a0a', 
+        color: '#f39c12', 
+        padding: '0 30px',
+        borderBottom: '1px solid #333',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between', // Empuja el logo a la izquierda y los botones a la derecha
+        position: 'sticky', // Mantiene el Navbar siempre visible al hacer scroll
+        top: 0,
+        zIndex: 1000,
+        height: '63px' // Altura fija sincronizada con la vista del Builder
+      }}>
+        
+        {/* Sección Izquierda: Logo y Título */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '1.8rem' }}>🐉</span>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', letterSpacing: '1px' }}>FORJA DE MITOS</h1>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
+        {/* Sección Derecha: Estadísticas en vivo y Controles */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          
+          {/* Contadores */}
+          <div style={{ display: 'flex', gap: '15px', fontSize: '0.95rem', color: '#ccc', backgroundColor: '#1a1a1a', padding: '5px 15px', borderRadius: '20px', border: '1px solid #333' }}>
+            <span>Mazo: <strong style={{ color: mazo.length === 50 ? '#e74c3c' : '#fff' }}>{mazo.length}/50</strong></span>
+            <span>Oros: <strong style={{ color: '#f1c40f' }}>{oros.length}</strong></span>
+          </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          {/* Botón Limpiar */}
+          <button 
+            onClick={handleLimpiar}
+            disabled={mazo.length === 0 && oros.length === 0}
+            style={{ 
+              padding: '8px 15px', 
+              backgroundColor: (mazo.length === 0 && oros.length === 0) ? '#333' : '#c0392b', 
+              color: (mazo.length === 0 && oros.length === 0) ? '#666' : 'white', 
+              border: 'none', 
+              borderRadius: '6px',
+              cursor: (mazo.length === 0 && oros.length === 0) ? 'not-allowed' : 'pointer',
+              fontWeight: 'bold',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={(e) => { if (mazo.length > 0 || oros.length > 0) e.target.style.backgroundColor = '#e74c3c' }}
+            onMouseLeave={(e) => { if (mazo.length > 0 || oros.length > 0) e.target.style.backgroundColor = '#c0392b' }}
+          >
+            Limpiar Mazo
+          </button>
+          
+          {/* Botón Guardar (Preparado para Firebase) */}
+          <button 
+            onClick={() => alert('Pronto conectaremos Firebase para guardar tus mazos en la nube ☁️')}
+            style={{ 
+              padding: '8px 15px', 
+              backgroundColor: '#2980b9', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#3498db'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = '#2980b9'}
+          >
+            Guardar Mazo
+          </button>
+          
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      </header>
+      
+      <main>
+        <Builder />
+      </main>
+      
+    </div>
+  );
 }
 
-export default App
+export default App;
