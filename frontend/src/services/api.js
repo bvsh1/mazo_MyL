@@ -1,9 +1,8 @@
 import axios from 'axios';
 
-// Creamos una instancia preconfigurada de Axios
 const api = axios.create({
-    // Esta es la URL donde corre tu servidor de Django
-    baseURL: 'http://localhost:8000/api/', 
+    // Vite inyectará la URL correcta dependiendo de dónde esté corriendo
+    baseURL: import.meta.env.VITE_API_URL, 
 });
 
 export default api;
