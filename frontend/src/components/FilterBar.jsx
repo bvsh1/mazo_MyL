@@ -3,12 +3,9 @@ import React from 'react';
 
 export default function FilterBar({ filtros, setFiltros }) {
   
-  // Manejador genérico para todos los inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     
-    // Regla especial: Si el usuario cambia el "Tipo Principal", 
-    // limpiamos la raza y el subtipoOro para que no queden filtros ocultos bugeando la búsqueda
     if (name === 'tipo') {
       setFiltros(prev => ({ ...prev, tipo: value, raza: '', subtipoOro: '' }));
     } else {
@@ -38,18 +35,90 @@ export default function FilterBar({ filtros, setFiltros }) {
       alignItems: 'center'
     }}>
       
-      {/* 1. Buscador por texto (Nombre o Habilidad) */}
+      {/* 1. Buscador */}
       <input 
         type="text" 
         name="search" 
         placeholder="Buscar por nombre o habilidad..." 
-        value={filtros.search} 
+        value={filtros.search || ''} 
         onChange={handleChange}
         style={{ ...inputStyle, flex: 1, minWidth: '200px' }}
       />
 
-      {/* 2. Filtro Principal (Tipo de Carta) */}
-      <select name="tipo" value={filtros.tipo} onChange={handleChange} style={inputStyle}>
+      {/* 2. Filtro de Ediciones Correcto */}
+      <select name="edicion" value={filtros.edicion || ''} onChange={handleChange} style={inputStyle}>
+        <option value="">Todas las Ediciones</option>
+        
+        <optgroup label="Primera Era">
+          <option value="el-reto">El Reto</option>
+          <option value="mundo-gotico">Mundo Gótico</option>
+          <option value="la-ira-del-nahual">La Ira del Nahual</option>
+          <option value="ragnarok">Ragnarok</option>
+          <option value="la-cofradia">La Cofradía</option>
+          <option value="espiritu-del-dragon">Espíritu del Dragón</option>
+        </optgroup>
+        
+        <optgroup label="Primer Bloque">
+          <option value="espada-sagrada">Espada Sagrada</option>
+          <option value="cruzadas">Cruzadas</option>
+          <option value="helenica">Helénica</option>
+          <option value="imperio">Imperio</option>
+          <option value="hijos-de-daana">Hijos de Daana</option>
+          <option value="tierras-altas">Tierras Altas</option>
+          <option value="dominios-de-ra">Dominios de Ra</option>
+          <option value="encrucijada">Encrucijada</option>
+        </optgroup>
+
+        <optgroup label="Segundo Bloque">
+          <option value="guerrero-jaguar">Guerrero Jaguar</option>
+          <option value="vendaval">Vendaval</option>
+          <option value="barbarie">Barbarie</option>
+          <option value="reino-de-acero">Reino de Acero</option>
+          <option value="hordas">Hordas</option>
+          <option value="bestiario">Bestiario</option>
+          <option value="heroes">Héroes</option>
+        </optgroup>
+
+        <optgroup label="Furia">
+          <option value="furia">Furia</option>
+          <option value="furia-extension">Furia Extensión</option>
+          <option value="sumeria">Sumeria</option>
+          <option value="rebelion">Rebelión</option>
+          <option value="asgard">Asgard</option>
+          <option value="midgard">Midgard</option>
+          <option value="camelot">Camelot</option>
+          <option value="templarios">Templarios</option>
+          <option value="bushido">Bushido</option>
+          <option value="sol-naciente">Sol Naciente</option>
+        </optgroup>
+
+        <optgroup label="Furia Extendido">
+          <option value="roma">Roma</option>
+          <option value="excalibur">Excalibur</option>
+          <option value="troya">Troya</option>
+          <option value="guerreros-del-sol">Guerreros del Sol</option>
+          <option value="guardianes-de-daana">Guardianes de Daana</option>
+        </optgroup>
+
+        <optgroup label="Imperio">
+          <option value="kemet">Kemet</option>
+          <option value="arsenal">Arsenal</option>
+          <option value="angeles-y-demonios">Ángeles y Demonios</option>
+          <option value="exploradores">Exploradores</option>
+          <option value="acero">Acero</option>
+          <option value="cid">Cid</option>
+          <option value="valhalla">Valhalla</option>
+          <option value="shogun">Shogun</option>
+          <option value="keltoi">Keltoi</option>
+          <option value="axis">Axis</option>
+          <option value="napoleon">Napoleón</option>
+          <option value="japon-medieval">Japón Medieval</option>
+          <option value="bestiarium">Bestiarium</option>
+        </optgroup>
+      </select>
+
+      {/* 3. Filtro Principal (Tipo de Carta) */}
+      <select name="tipo" value={filtros.tipo || ''} onChange={handleChange} style={inputStyle}>
         <option value="">Todos los Tipos</option>
         <option value="Aliado">Aliado</option>
         <option value="Talismán">Talismán</option>
@@ -58,9 +127,9 @@ export default function FilterBar({ filtros, setFiltros }) {
         <option value="Oro">Oro</option>
       </select>
 
-      {/* 3. Filtro Secundario A: Razas (SOLO aparece si eliges Aliado) */}
+      {/* 4. Filtro Razas */}
       {filtros.tipo === 'Aliado' && (
-        <select name="raza" value={filtros.raza} onChange={handleChange} style={{...inputStyle, border: '1px solid #3498db'}}>
+        <select name="raza" value={filtros.raza || ''} onChange={handleChange} style={{...inputStyle, border: '1px solid #3498db'}}>
           <option value="">Todas las Razas</option>
           <option value="Caballero">Caballero</option>
           <option value="Dragón">Dragón</option>
@@ -75,9 +144,9 @@ export default function FilterBar({ filtros, setFiltros }) {
         </select>
       )}
 
-      {/* 4. Filtro Secundario B: Subtipos de Oro (SOLO aparece si eliges Oro) */}
+      {/* 5. Filtro Subtipos de Oro */}
       {filtros.tipo === 'Oro' && (
-        <select name="subtipoOro" value={filtros.subtipoOro} onChange={handleChange} style={{...inputStyle, border: '1px solid #f1c40f'}}>
+        <select name="subtipoOro" value={filtros.subtipoOro || ''} onChange={handleChange} style={{...inputStyle, border: '1px solid #f1c40f'}}>
           <option value="">Cualquier Oro</option>
           <option value="basico">Oro Normal (Sin Habilidad)</option>
           <option value="habilidad">Oro con Habilidad</option>
@@ -85,9 +154,9 @@ export default function FilterBar({ filtros, setFiltros }) {
         </select>
       )}
 
-      {/* 5. Botón de Reset */}
+      {/* 6. Botón de Reset */}
       <button 
-        onClick={() => setFiltros({ search: '', tipo: '', raza: '', subtipoOro: '' })}
+        onClick={() => setFiltros({ search: '', tipo: '', raza: '', subtipoOro: '', edicion: '' })}
         style={{ 
           padding: '10px 20px', 
           backgroundColor: '#c0392b', 
@@ -102,7 +171,7 @@ export default function FilterBar({ filtros, setFiltros }) {
         onMouseEnter={(e) => e.target.style.backgroundColor = '#e74c3c'}
         onMouseLeave={(e) => e.target.style.backgroundColor = '#c0392b'}
       >
-        Limpiar Filtros
+        Limpiar
       </button>
 
     </div>

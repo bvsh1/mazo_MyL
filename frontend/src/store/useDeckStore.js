@@ -1,8 +1,7 @@
 // src/store/useDeckStore.js
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware'; // 1. Importamos persist
+import { persist } from 'zustand/middleware';
 
-// 2. Envolvemos toda la creación de nuestro store en persist()
 export const useDeckStore = create(
   persist(
     (set) => ({
@@ -10,15 +9,28 @@ export const useDeckStore = create(
       oros: [],
 
       agregarCarta: (carta) => set((state) => {
-        if (carta.tipo.toLowerCase() === 'oro') {
-          return { oros: [...state.oros, carta] };
-        }
+        // 1. Calculamos el total de cartas en el mazo completo
+        const totalCartas = state.mazo.length + state.oros.length;
         
-        if (state.mazo.length >= 50) {
-          alert("Tu Mazo Castillo ya tiene 50 cartas.");
+        if (totalCartas >= 50) {
+          alert("Tu mazo ya alcanzó el límite máximo de 50 cartas.");
           return state;
         }
 
+        // 2. Si es un Oro, lo guardamos en su lista visual
+        if (carta.tipo.toLowerCase() === 'oro') {
+          // Si el oro tiene habilidad, no puede haber más de 3
+          if (carta.habilidad) {
+            const copiasOros = state.oros.filter(c => c.id === carta.id).length;
+            if (copiasOros >= 3) {
+              alert("No puedes tener más de 3 copias del mismo Oro con habilidad.");
+              return state;
+            }
+          }
+          return { oros: [...state.oros, carta] };
+        }
+        
+        // 3. Si es otra carta, validamos el límite de 3 copias
         const copiasActuales = state.mazo.filter(c => c.id === carta.id).length;
         if (copiasActuales >= 3) {
           alert("No puedes tener más de 3 copias de la misma carta (excepto Únicas).");
@@ -47,7 +59,7 @@ export const useDeckStore = create(
       limpiarMazo: () => set({ mazo: [], oros: [] }),
     }),
     {
-      name: 'forja-mitos-storage', // 3. El nombre de la "caja fuerte" en tu navegador
+      name: 'forja-mitos-storage',
     }
   )
 );
