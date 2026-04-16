@@ -52,7 +52,7 @@ export default function FilterBar({ filtros, setFiltros }) {
         <optgroup label="Primera Era">
           <option value="el-reto">El Reto</option>
           <option value="mundo-gotico">Mundo Gótico</option>
-          <option value="la-ira-del-nahual">La Ira del Nahual</option>
+          <option value="ira-del-nahual">La Ira del Nahual</option>
           <option value="ragnarok">Ragnarok</option>
           <option value="la-cofradia">La Cofradía</option>
           <option value="espiritu-del-dragon">Espíritu del Dragón</option>
@@ -103,16 +103,15 @@ export default function FilterBar({ filtros, setFiltros }) {
         <optgroup label="Imperio">
           <option value="kemet">Kemet</option>
           <option value="arsenal">Arsenal</option>
-          <option value="angeles-y-demonios">Ángeles y Demonios</option>
-          <option value="exploradores">Exploradores</option>
+          <option value="angeles-demonios">Ángeles y Demonios</option>
+          <option value="explorandum">Exploradores</option>
           <option value="acero">Acero</option>
           <option value="cid">Cid</option>
           <option value="valhalla">Valhalla</option>
-          <option value="shogun">Shogun</option>
+          <option value="shogun-1">Shogun</option>
           <option value="keltoi">Keltoi</option>
-          <option value="axis">Axis</option>
+          <option value="axis-mundi">Axis</option>
           <option value="napoleon">Napoleón</option>
-          <option value="japon-medieval">Japón Medieval</option>
           <option value="bestiarium">Bestiarium</option>
         </optgroup>
       </select>

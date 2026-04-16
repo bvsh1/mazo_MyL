@@ -21,6 +21,7 @@ export default function Builder() {
   const [cartas, setCartas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [filtros, setFiltros] = useState({ search: '', tipo: '', raza: '', subtipoOro: '', edicion: '' });
+  const [cartaSeleccionada, setCartaSeleccionada] = useState(null);
   
   const { mazo, oros, quitarCarta } = useDeckStore();
 
@@ -62,8 +63,8 @@ export default function Builder() {
             gap: '20px',
             paddingTop: '10px'
           }}>
-            {cartas.slice(0, 100).map(carta => (
-              <Carta key={carta.id} carta={carta} />
+            {cartas.map(carta => (
+              <Carta key={carta.id} carta={carta} alHacerClicImagen={setCartaSeleccionada} />
             ))}
           </div>
         )}
@@ -134,6 +135,87 @@ export default function Builder() {
           </ul>
         </div>
       </div>
+
+      {/* MODAL DETALLE DE CARTA */}
+      {cartaSeleccionada && (
+        <div 
+          onClick={() => setCartaSeleccionada(null)}
+          style={{
+            position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000,
+            backdropFilter: 'blur(5px)'
+          }}
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              display: 'flex', backgroundColor: '#1e1e24', borderRadius: '12px', overflow: 'hidden',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.8)', maxWidth: '900px', width: '90%', maxHeight: '85vh',
+              border: '1px solid #444'
+            }}
+          >
+            {/* Imagen */}
+            <div style={{ flex: '1', backgroundColor: '#0f0f13', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
+              <img 
+                src={cartaSeleccionada.imagen_url} 
+                alt={cartaSeleccionada.nombre}
+                style={{ maxWidth: '100%', maxHeight: '75vh', objectFit: 'contain', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.5))' }}
+                onError={(e) => { e.target.src = 'https://via.placeholder.com/300x400?text=MyL' }}
+              />
+            </div>
+            
+            {/* Detalles */}
+            <div style={{ flex: '1.2', padding: '40px 30px', position: 'relative', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+              <button 
+                onClick={() => setCartaSeleccionada(null)}
+                style={{ position: 'absolute', top: '15px', right: '20px', background: 'none', border: 'none', color: '#aaa', fontSize: '2rem', cursor: 'pointer', transition: 'color 0.2s' }}
+                onMouseEnter={(e) => e.target.style.color = '#fff'}
+                onMouseLeave={(e) => e.target.style.color = '#aaa'}
+              >
+                &times;
+              </button>
+              
+              <h2 style={{ color: '#f39c12', fontSize: '2.2rem', marginTop: 0, marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                {cartaSeleccionada.nombre}
+              </h2>
+              
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '25px', flexWrap: 'wrap' }}>
+                <span style={{ backgroundColor: '#2c3e50', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', border: '1px solid #34495e' }}>{cartaSeleccionada.tipo}</span>
+                {cartaSeleccionada.raza && <span style={{ backgroundColor: '#8e44ad', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', border: '1px solid #9b59b6' }}>{cartaSeleccionada.raza}</span>}
+                {cartaSeleccionada.coste != null && <span style={{ backgroundColor: '#c0392b', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', fontWeight: 'bold', border: '1px solid #e74c3c' }}>Coste: {cartaSeleccionada.coste}</span>}
+                {cartaSeleccionada.fuerza != null && <span style={{ backgroundColor: '#27ae60', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', fontWeight: 'bold', border: '1px solid #2ecc71' }}>Fuerza: {cartaSeleccionada.fuerza}</span>}
+              </div>
+
+              <div style={{ marginBottom: '25px', backgroundColor: '#25252b', padding: '20px', borderRadius: '8px', borderLeft: '4px solid #f39c12' }}>
+                <h4 style={{ color: '#f39c12', margin: '0 0 10px 0', textTransform: 'uppercase', fontSize: '0.9rem', letterSpacing: '1px' }}>Habilidad</h4>
+                <p style={{ margin: 0, lineHeight: '1.6', color: '#eee', whiteSpace: 'pre-line' }}>{cartaSeleccionada.habilidad || "Sin habilidad."}</p>
+              </div>
+
+              <div style={{ fontSize: '0.9rem', color: '#aaa', display: 'flex', gap: '20px' }}>
+                <p><strong style={{ color: '#ccc' }}>Edición:</strong> <span style={{ textTransform: 'capitalize' }}>{cartaSeleccionada.edicion?.replace(/-/g, ' ')}</span></p>
+                <p><strong style={{ color: '#ccc' }}>Frecuencia:</strong> <span style={{ textTransform: 'capitalize' }}>{cartaSeleccionada.frecuencia}</span></p>
+              </div>
+
+              <button 
+                onClick={() => {
+                  useDeckStore.getState().agregarCarta(cartaSeleccionada);
+                  setCartaSeleccionada(null);
+                }}
+                style={{ 
+                  marginTop: 'auto', width: '100%', padding: '15px', 
+                  backgroundColor: '#f39c12', color: '#111', border: 'none', 
+                  borderRadius: '8px', fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer',
+                  transition: 'all 0.2s', textTransform: 'uppercase', letterSpacing: '1px'
+                }}
+                onMouseEnter={(e) => { e.target.style.backgroundColor = '#f1c40f'; e.target.style.transform = 'translateY(-2px)'; }}
+                onMouseLeave={(e) => { e.target.style.backgroundColor = '#f39c12'; e.target.style.transform = 'translateY(0)'; }}
+              >
+                Añadir al Mazo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

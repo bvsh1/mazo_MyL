@@ -21,25 +21,25 @@ class Command(BaseCommand):
         # Mapeo exhaustivo y exacto según formatos de juego
         mapeo_ediciones = {
             # --- PRIMERA ERA ---
-            "el-reto": ("Primera Era", "Primera Era"),
-            "mundo-gotico": ("Primera Era", "Primera Era"),
-            "la-ira-del-nahual": ("Primera Era", "Primera Era"),
+            "el_reto": ("Primera Era", "Primera Era"),
+            "mundo_gotico": ("Primera Era", "Primera Era"),
+            "ira_del_nahual": ("Primera Era", "Primera Era"),
             "ragnarok": ("Primera Era", "Primera Era"),
-            "la-cofradia": ("Primera Era", "Primera Era"),
-            "espiritu-del-dragon": ("Primera Era", "Primera Era"),
+            "la_cofradia": ("Primera Era", "Primera Era"),
+            "espiritu_del_dragon": ("Primera Era", "Primera Era"),
 
             # --- PRIMER BLOQUE ---
             "espada-sagrada": ("Primer Bloque", "Segunda Era"),
             "cruzadas": ("Primer Bloque", "Segunda Era"),
             "helenica": ("Primer Bloque", "Segunda Era"),
             "imperio": ("Primer Bloque", "Segunda Era"),
-            "hijos-de-daana": ("Primer Bloque", "Segunda Era"),
-            "tierras-altas": ("Primer Bloque", "Segunda Era"),
+            "hijos_de_daana": ("Primer Bloque", "Segunda Era"),
+            "tierras_altas": ("Primer Bloque", "Segunda Era"),
             "dominios-de-ra": ("Primer Bloque", "Segunda Era"),
             "encrucijada": ("Primer Bloque", "Segunda Era"),
 
             # --- SEGUNDO BLOQUE ---
-            "guerrero-jaguar": ("Segundo Bloque", "Segunda Era"),
+            "guerrero_jaguar": ("Segundo Bloque", "Segunda Era"),
             "vendaval": ("Segundo Bloque", "Segunda Era"),
             "barbarie": ("Segundo Bloque", "Segunda Era"),
             "reino-de-acero": ("Segundo Bloque", "Segunda Era"),
@@ -63,23 +63,21 @@ class Command(BaseCommand):
             "roma": ("Furia Extendido", "Nueva Era"),
             "excalibur": ("Furia Extendido", "Nueva Era"),
             "troya": ("Furia Extendido", "Nueva Era"),
-            "guerreros-del-sol": ("Furia Extendido", "Nueva Era"),
-            "guardianes-de-daana": ("Furia Extendido", "Nueva Era"),
+            "guerreros_del_sol": ("Furia Extendido", "Nueva Era"),
+            "guardianes_de_daana": ("Furia Extendido", "Nueva Era"),
 
             # --- IMPERIO ---
             "kemet": ("Imperio", "Nueva Era"),
             "arsenal": ("Imperio", "Nueva Era"),
             "valhalla": ("Imperio", "Nueva Era"),
-            "exploradores": ("Imperio", "Nueva Era"),
-            "angeles-y-demonios": ("Imperio", "Nueva Era"),
-            "angeles-demonios": ("Imperio", "Nueva Era"), # Por si difiere el slug en el JSON
+            "explorandum": ("Imperio", "Nueva Era"),
+            "angeles-demonios": ("Imperio", "Nueva Era"),
             "acero": ("Imperio", "Nueva Era"),
             "cid": ("Imperio", "Nueva Era"),
-            "shogun": ("Imperio", "Nueva Era"),
+            "shogun_1": ("Imperio", "Nueva Era"),
             "keltoi": ("Imperio", "Nueva Era"),
-            "axis": ("Imperio", "Nueva Era"),
+            "axis-mundi": ("Imperio", "Nueva Era"),
             "napoleon": ("Imperio", "Nueva Era"),
-            "japon-medieval": ("Imperio", "Nueva Era"),
             "bestiarium": ("Imperio", "Nueva Era"),
         }
 
@@ -112,7 +110,7 @@ class Command(BaseCommand):
                     'coste': c.get('cost'),
                     'fuerza': c.get('damage'),
                     'habilidad': c.get('ability'),
-                    'edicion': ed_slug.replace("-", " ").title(),
+                    'edicion': ed_slug.replace("_", " ").replace("-", " ").title(),
                     'imagen_url': url_img,
                     'bloque': bloque_obj
                 }
