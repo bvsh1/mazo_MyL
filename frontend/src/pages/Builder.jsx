@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import Carta from '../components/Card';
 import FilterBar from '../components/FilterBar';
+import DeckVisualizer from '../components/DeckVisualizer';
 import { useDeckStore } from '../store/useDeckStore';
 
 const agruparCartas = (lista) => {
@@ -22,6 +23,7 @@ export default function Builder() {
   const [cargando, setCargando] = useState(true);
   const [filtros, setFiltros] = useState({ search: '', tipo: '', raza: '', subtipoOro: '', edicion: '' });
   const [cartaSeleccionada, setCartaSeleccionada] = useState(null);
+  const [mostrarVisualizador, setMostrarVisualizador] = useState(false);
   
   const { mazo, oros, quitarCarta } = useDeckStore();
 
@@ -86,10 +88,25 @@ export default function Builder() {
         
         <div style={{ marginBottom: '30px' }}>
           {/* Título actualizado: ya no muestra el /50 aquí */}
-          <h2 style={{ margin: 0, color: '#f39c12', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2 style={{ margin: 0, color: '#f39c12', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
             Cartas del Castillo
             <span style={{ fontSize: '1rem', color: '#aaa' }}>{mazo.length}</span>
           </h2>
+          
+          <button
+            onClick={() => setMostrarVisualizador(true)}
+            style={{
+              width: '100%', padding: '12px', backgroundColor: '#3498db', color: 'white',
+              border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer',
+              marginBottom: '15px', transition: 'background-color 0.2s', fontSize: '0.9rem',
+              textTransform: 'uppercase', letterSpacing: '1px'
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#2980b9'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = '#3498db'}
+          >
+            Visualizar Mazo
+          </button>
+          
           <hr style={{ borderColor: '#333', margin: '10px 0' }}/>
           
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -215,6 +232,11 @@ export default function Builder() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* MODAL VISUALIZADOR DE MAZO */}
+      {mostrarVisualizador && (
+        <DeckVisualizer onClose={() => setMostrarVisualizador(false)} />
       )}
     </div>
   );
