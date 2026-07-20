@@ -25,21 +25,35 @@ export default function Builder() {
   const [cartaSeleccionada, setCartaSeleccionada] = useState(null);
   const [mostrarVisualizador, setMostrarVisualizador] = useState(false);
   
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCartas([]);
+    setPage(1);
+    setHasMore(true);
+  }, [filtros]);
+  
   const { mazo, oros, quitarCarta } = useDeckStore();
 
   useEffect(() => {
+    if (!hasMore) return;
     setCargando(true);
-    api.get('/cartas/', { params: filtros })
+    api.get('/cartas/', { params: { ...filtros, page } })
       .then(response => {
         const datos = response.data.results || response.data;
-        setCartas(datos);
+        setCartas(prev => page === 1 ? datos : [...prev, ...datos]);
+        if (response.data.next === null || !response.data.results) {
+          setHasMore(false);
+        }
         setCargando(false);
       })
       .catch(error => {
         console.error("Error al cargar:", error);
         setCargando(false);
       });
-  }, [filtros]);
+  }, [filtros, page]);
 
   const mazoAgrupado = agruparCartas(mazo);
   const orosAgrupados = agruparCartas(oros);
@@ -54,9 +68,9 @@ export default function Builder() {
         
         <FilterBar filtros={filtros} setFiltros={setFiltros} />
         
-        {cargando ? (
+        {cartas.length === 0 && !cargando ? (
           <div style={{ textAlign: 'center', marginTop: '50px', color: '#888', fontSize: '1.2rem' }}>
-            Invocando cartas...
+            No se encontraron cartas con esos filtros.
           </div>
         ) : (
           <div style={{ 
@@ -68,6 +82,29 @@ export default function Builder() {
             {cartas.map(carta => (
               <Carta key={carta.id} carta={carta} alHacerClicImagen={setCartaSeleccionada} />
             ))}
+          </div>
+        )}
+        
+        {cargando && (
+          <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '20px', color: '#888', fontSize: '1.2rem' }}>
+            Invocando cartas...
+          </div>
+        )}
+
+        {hasMore && !cargando && (
+          <div style={{ textAlign: 'center', marginTop: '30px', marginBottom: '30px' }}>
+            <button 
+              onClick={() => setPage(p => p + 1)}
+              style={{
+                padding: '12px 24px', backgroundColor: '#3498db', color: 'white',
+                border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer',
+                fontSize: '1rem', transition: 'background-color 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#2980b9'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#3498db'}
+            >
+              Cargar Más
+            </button>
           </div>
         )}
       </div>

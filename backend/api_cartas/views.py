@@ -1,4 +1,6 @@
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from django.db.models import Q
 from .models import Carta
@@ -23,7 +25,7 @@ class CartaViewSet(viewsets.ReadOnlyModelViewSet):
         if tipo:
             queryset = queryset.filter(tipo__iexact=tipo)
         if raza:
-            queryset = queryset.filter(raza__iexact=raza)
+            queryset = queryset.filter(raza__icontains=raza)
         if coste:
             queryset = queryset.filter(coste=coste)
             
@@ -33,7 +35,7 @@ class CartaViewSet(viewsets.ReadOnlyModelViewSet):
         if era:
             queryset = queryset.filter(bloque__era__nombre__iexact=era.replace("-", " "))
         if edicion:
-            queryset = queryset.filter(edicion__iexact=edicion.replace("-", " "))
+            queryset = queryset.filter(edicion__icontains=edicion.replace("-", " "))
 
         # Filtro de Oros (sin habilidad vs con habilidad)
         if tipo == 'Oro' and subtipoOro:
@@ -45,3 +47,24 @@ class CartaViewSet(viewsets.ReadOnlyModelViewSet):
                 queryset = queryset.filter(nombre__icontains='Inicial')
 
         return queryset
+
+    @action(detail=False, methods=['get'])
+    def razas(self, request):
+        edicion = request.query_params.get('edicion')
+        queryset = Carta.objects.filter(tipo__iexact='Aliado')
+        
+        if edicion:
+            queryset = queryset.filter(edicion__icontains=edicion.replace("-", " "))
+            
+        razas = queryset.exclude(raza__isnull=True).exclude(raza__exact='').values_list('raza', flat=True).distinct()
+        
+        # Split dual races like "Caballero / Guerrero" and collect unique ones
+        razas_set = set()
+        for r in razas:
+            if not r or r == 'Sin Raza':
+                continue
+            for part in r.split('/'):
+                razas_set.add(part.strip())
+                
+        razas_list = sorted(list(razas_set))
+        return Response(razas_list)

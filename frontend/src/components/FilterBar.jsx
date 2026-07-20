@@ -1,8 +1,18 @@
-// src/components/FilterBar.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../services/api';
 
 export default function FilterBar({ filtros, setFiltros }) {
   
+  const [razasDisponibles, setRazasDisponibles] = useState([]);
+
+  useEffect(() => {
+    if (filtros.tipo === 'Aliado') {
+      api.get('/cartas/razas/', { params: { edicion: filtros.edicion } })
+        .then(response => setRazasDisponibles(response.data))
+        .catch(error => console.error("Error al cargar razas:", error));
+    }
+  }, [filtros.edicion, filtros.tipo]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     
@@ -130,16 +140,9 @@ export default function FilterBar({ filtros, setFiltros }) {
       {filtros.tipo === 'Aliado' && (
         <select name="raza" value={filtros.raza || ''} onChange={handleChange} style={{...inputStyle, border: '1px solid #3498db'}}>
           <option value="">Todas las Razas</option>
-          <option value="Caballero">Caballero</option>
-          <option value="Dragón">Dragón</option>
-          <option value="Sombra">Sombra</option>
-          <option value="Faerie">Faerie</option>
-          <option value="Guerrero">Guerrero</option>
-          <option value="Bestia">Bestia</option>
-          <option value="Eterno">Eterno</option>
-          <option value="Sacerdote">Sacerdote</option>
-          <option value="Ancestral">Ancestral</option>
-          <option value="Samurái">Samurái</option>
+          {razasDisponibles.map(raza => (
+            <option key={raza} value={raza}>{raza}</option>
+          ))}
         </select>
       )}
 
